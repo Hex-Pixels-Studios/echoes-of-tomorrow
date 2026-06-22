@@ -27,7 +27,7 @@ public class GameSpawner : MonoBehaviour
     {
         if (playerPrefab == null)
         {
-            Debug.LogError("GameSpawner: no player prefab assigned");
+            Debug.LogError("GameSpawner... no player prefab assigned");
             return;
         }
 
@@ -63,7 +63,7 @@ public class GameSpawner : MonoBehaviour
             else if (gamepads.Count == 1)
             {
                 Debug.LogWarning(
-                    "GameSpawner: only one gamepad, giving p2 keyboard+mouse as fallback"
+                    "GameSpawner: only one gamepad, giving p2 keyboard+mouse as fallbackyy"
                 );
                 p1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
                 if (keyboard != null && mouse != null)

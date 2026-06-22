@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// [RequireComponent(typeof(CharacterController))]
-// [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     [Header("movement")]
@@ -29,17 +27,39 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float fallMultiplier = 1.6f;
 
+    [Header("ground check")]
     [SerializeField]
-    float groundCheckDistance = 0.08f;
+    Transform groundCheck;
+
+    [SerializeField]
+    float groundCheckRadius = 0.2f;
 
     [SerializeField]
     LayerMask groundMask;
+
+    public enum PlayerID
+    {
+        P1,
+        P2,
+    }
+
+    [Header("player identity")]
+    [SerializeField]
+    PlayerID playerID = PlayerID.P1;
+
+    [SerializeField]
+    Renderer playerRenderer;
+
+    [SerializeField]
+    Color p1Color = new Color(0.2f, 0.8f, 1f);
+
+    [SerializeField]
+    Color p2Color = new Color(1f, 0.4f, 0.1f);
 
     CharacterController cc;
     PlayerInput playerInput;
 
     InputAction moveAction;
-    InputAction lookAction;
     InputAction jumpAction;
 
     Vector3 velocity;
@@ -50,10 +70,7 @@ public class PlayerController : MonoBehaviour
     float jumpBufferTimer;
     const float JUMP_BUFFER = 0.12f;
 
-    Vector3 aimDirection;
-
-    Vector2 lastMousePosition;
-    bool mouseMoved;
+    Vector3 moveDirection;
 
     void Awake()
     {
@@ -61,24 +78,26 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
 
         moveAction = playerInput.actions["Move"];
-        lookAction = playerInput.actions["Look"];
         jumpAction = playerInput.actions["Jump"];
-
-        aimDirection = transform.forward;
     }
 
-    void OnEnable()
+    void Start()
     {
-        jumpAction.performed += OnJumpPressed;
-
-        lookAction.performed += OnLookPerformed;
+        ApplyPlayerColor();
     }
 
-    void OnDisable()
+    void ApplyPlayerColor()
     {
-        jumpAction.performed -= OnJumpPressed;
-        lookAction.performed -= OnLookPerformed;
+        if (playerRenderer == null)
+            return;
+
+        Color color = playerID == PlayerID.P1 ? p1Color : p2Color;
+        playerRenderer.material.color = color;
     }
+
+    void OnEnable() => jumpAction.performed += OnJumpPressed;
+
+    void OnDisable() => jumpAction.performed -= OnJumpPressed;
 
     void OnJumpPressed(InputAction.CallbackContext ctx)
     {
@@ -86,79 +105,50 @@ public class PlayerController : MonoBehaviour
         jumpBufferTimer = JUMP_BUFFER;
     }
 
-    void OnLookPerformed(InputAction.CallbackContext ctx)
-    {
-        mouseMoved = true;
-    }
-
     void Update()
     {
         CheckGrounded();
-        HandleRotation();
         HandleMovement();
+        HandleRotation();
         HandleJump();
         ApplyGravity();
         ApplyMotion();
-
-        mouseMoved = false;
     }
 
     void CheckGrounded()
     {
-        Vector3 sphereOrigin = transform.position + Vector3.up * cc.radius;
-        isGrounded = Physics.CheckSphere(sphereOrigin, cc.radius + groundCheckDistance, groundMask);
-
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
         if (isGrounded && verticalVelocity < 0f)
             verticalVelocity = -2f;
-    }
-
-    void HandleRotation()
-    {
-        Vector2 lookInput = lookAction.ReadValue<Vector2>();
-
-        if (playerInput.currentControlScheme == "Gamepad")
-        {
-            if (lookInput.sqrMagnitude > 0.15f)
-                aimDirection = new Vector3(lookInput.x, 0f, lookInput.y);
-        }
-        else
-        {
-            if (mouseMoved)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(lookInput);
-                Plane groundPlane = new Plane(Vector3.up, transform.position);
-
-                if (groundPlane.Raycast(ray, out float dist))
-                {
-                    Vector3 worldPoint = ray.GetPoint(dist);
-                    Vector3 dir = worldPoint - transform.position;
-                    dir.y = 0f;
-
-                    if (dir.sqrMagnitude > 0.5f)
-                        aimDirection = dir;
-                }
-            }
-        }
-
-        if (aimDirection.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(aimDirection.normalized);
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                targetRot,
-                rotationSpeed * Time.deltaTime
-            );
-        }
     }
 
     void HandleMovement()
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
 
-        Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
+        // world space - camera is fixed topdown so world forward/right maps directly to wasd/stick
+        Vector3 moveDir = new Vector3(input.x, 0f, input.y).normalized;
+
+        // cache for rotation to follow
+        if (moveDir.sqrMagnitude > 0.01f)
+            moveDirection = moveDir;
 
         float rate = moveDir.sqrMagnitude > 0.01f ? acceleration : deceleration;
         velocity = Vector3.MoveTowards(velocity, moveDir * moveSpeed, rate * Time.deltaTime);
+    }
+
+    void HandleRotation()
+    {
+        // rotate to face the direction of movement - no look action needed
+        if (moveDirection.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRot,
+                rotationSpeed * Time.deltaTime
+            );
+        }
     }
 
     void HandleJump()
@@ -190,9 +180,17 @@ public class PlayerController : MonoBehaviour
         cc.Move((velocity + Vector3.up * verticalVelocity) * Time.deltaTime);
     }
 
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheck == null)
+            return;
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+    }
+
     public Vector3 Velocity => velocity;
     public bool IsGrounded => isGrounded;
     public float VerticalVelocity => verticalVelocity;
-    public Vector3 AimDirection =>
-        aimDirection.sqrMagnitude > 0f ? aimDirection.normalized : transform.forward;
+    public Vector3 FacingDirection =>
+        moveDirection.sqrMagnitude > 0f ? moveDirection.normalized : transform.forward;
 }
