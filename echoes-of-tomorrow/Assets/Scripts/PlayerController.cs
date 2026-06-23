@@ -193,4 +193,6 @@ public class PlayerController : MonoBehaviour
     public float VerticalVelocity => verticalVelocity;
     public Vector3 FacingDirection =>
         moveDirection.sqrMagnitude > 0f ? moveDirection.normalized : transform.forward;
+
+    public PlayerID ID => playerID;
 }
