@@ -4,22 +4,27 @@ using UnityEngine;
 public class PlayerStamina : MonoBehaviour
 {
     [Header("Stamina")]
-    [SerializeField] float maxStamina = 100f;
-    [SerializeField] float currentStamina;
+    [SerializeField]
+    float maxStamina = 100f;
+
+    [SerializeField]
+    float currentStamina;
 
     [Header("Regeneration")]
-    [SerializeField] float regenRate = 15f;
-    [SerializeField] float regenDelay = 1.5f;
+    [SerializeField]
+    float regenRate = 15f;
+
+    [SerializeField]
+    float regenDelay = 1.5f;
 
     float regenTimer;
     bool isRegenerating;
 
     //For subscribing to UI components or ability systems
-    public event Action<float, float> OnStaminaChanged; 
+    public event Action<float, float> OnStaminaChanged;
     public event Action OnStaminaDepleted;
 
-
-    public float MaxStamina => maxStamina; 
+    public float MaxStamina => maxStamina;
     public float CurrentStamina => currentStamina;
     public float StaminaPercent => currentStamina / maxStamina;
 
@@ -27,7 +32,7 @@ public class PlayerStamina : MonoBehaviour
 
     private void Awake()
     {
-        currentStamina = maxStamina; 
+        currentStamina = maxStamina;
     }
 
     void Update()
@@ -40,7 +45,7 @@ public class PlayerStamina : MonoBehaviour
         if (currentStamina >= maxStamina)
         {
             isRegenerating = false;
-            return; 
+            return;
         }
 
         if (regenTimer > 0f)
@@ -50,9 +55,9 @@ public class PlayerStamina : MonoBehaviour
             return;
         }
 
-        isRegenerating = true; 
+        isRegenerating = true;
         currentStamina = Mathf.Min(currentStamina + regenRate * Time.deltaTime, maxStamina);
-        OnStaminaChanged?.Invoke(currentStamina, maxStamina); 
+        OnStaminaChanged?.Invoke(currentStamina, maxStamina);
     }
 
     public bool UseStamina(float amount)
@@ -61,7 +66,7 @@ public class PlayerStamina : MonoBehaviour
             return false;
 
         currentStamina -= amount;
-        regenTimer = regenDelay;         
+        regenTimer = regenDelay;
         isRegenerating = false;
 
         OnStaminaChanged?.Invoke(currentStamina, maxStamina);
@@ -71,7 +76,6 @@ public class PlayerStamina : MonoBehaviour
 
         return true;
     }
-
 
     public void AddStamina(float amount)
     {

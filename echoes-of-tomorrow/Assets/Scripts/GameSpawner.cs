@@ -27,7 +27,7 @@ public class GameSpawner : MonoBehaviour
     {
         if (playerPrefab == null)
         {
-            Debug.LogError("GameSpawner... no player prefab assigned");
+            Debug.LogError(" no player prefab in game spawne");
             return;
         }
 
@@ -35,23 +35,20 @@ public class GameSpawner : MonoBehaviour
         var keyboard = Keyboard.current;
         var mouse = Mouse.current;
 
-        GameObject p1 = Instantiate(playerPrefab, spawnPointP1.position, spawnPointP1.rotation);
-        p1.name = "Player1";
-        var p1Input = p1.GetComponent<PlayerInput>();
+        GameObject p1Obj = Instantiate(playerPrefab, spawnPointP1.position, spawnPointP1.rotation);
+        p1Obj.name = "Player1";
+        var p1Input = p1Obj.GetComponent<PlayerInput>();
 
-        GameObject p2 = Instantiate(playerPrefab, spawnPointP2.position, spawnPointP2.rotation);
-        p2.name = "Player2";
-        var p2Input = p2.GetComponent<PlayerInput>();
+        GameObject p2Obj = Instantiate(playerPrefab, spawnPointP2.position, spawnPointP2.rotation);
+        p2Obj.name = "Player2";
+        var p2Input = p2Obj.GetComponent<PlayerInput>();
 
         if (p1UsesKeyboardMouse)
         {
             if (keyboard != null && mouse != null)
                 p1Input.SwitchCurrentControlScheme("KeyboardMouse", keyboard, mouse);
-
             if (gamepads.Count > 0)
                 p2Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
-            else
-                Debug.LogWarning("GameSpawner no gamepad found for p2");
         }
         else
         {
@@ -62,14 +59,18 @@ public class GameSpawner : MonoBehaviour
             }
             else if (gamepads.Count == 1)
             {
-                Debug.LogWarning(
-                    "GameSpawner: only one gamepad, giving p2 keyboard+mouse as fallbackyy"
-                );
                 p1Input.SwitchCurrentControlScheme("Gamepad", gamepads[0]);
                 if (keyboard != null && mouse != null)
                     p2Input.SwitchCurrentControlScheme("KeyboardMouse", keyboard, mouse);
             }
-            else { }
         }
+
+        var p1Controller = p1Obj.GetComponent<PlayerController>();
+        var p2Controller = p2Obj.GetComponent<PlayerController>();
+
+        p1Obj.GetComponent<UpgradeExecutor>()?.SetOpponent(p2Controller);
+        p2Obj.GetComponent<UpgradeExecutor>()?.SetOpponent(p1Controller);
+
+        Debug.Log($"p1: {p1Input.currentControlScheme} | p2: {p2Input.currentControlScheme}");
     }
 }

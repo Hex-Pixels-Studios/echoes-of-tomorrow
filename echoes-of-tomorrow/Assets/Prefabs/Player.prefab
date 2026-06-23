@@ -127,6 +127,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2311373951498979227}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5087690528395836498}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1382822576503084247}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4317569566849385254}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5244664090228640967}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6039302329975478486}
     - targetCorrespondingSourceObject: {fileID: -4819223349682164798, guid: b06dc088b2ca83b4e98b108e2cbe2bcf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3152661949470012493}
@@ -267,3 +282,81 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0.14, y: 1.5, z: 0.63}
+--- !u!114 &5087690528395836498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8682617006534562433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f21c657ab61114d98dc2ecff1418a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHealth: 100
+  currentHealth: 0
+  useInvincibility: 1
+  invincibilityDuration: 0.5
+--- !u!114 &1382822576503084247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8682617006534562433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e24d67a1bfec24cae6a6a1ccbb80bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+  maxStamina: 100
+  currentStamina: 0
+  regenRate: 15
+  regenDelay: 1.5
+--- !u!114 &4317569566849385254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8682617006534562433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f34ac4853ecc70140b9e0975e8a8e52b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrade
+--- !u!114 &5244664090228640967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8682617006534562433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b2ad36a186db82449fbb336b0e4a372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerKnockback
+  knockbackDecay: 8
+--- !u!114 &6039302329975478486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8682617006534562433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d86d666d92d6a40af9f66e3a0ab5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeExecutor
+  explosionRadius: 4
+  explosionDamage: 35
+  explosionKnockback: 15
+  explosionUpForce: 6
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  freezeDuration: 2.5
+  teleportPoints: []
