@@ -48,6 +48,10 @@ GameObject:
   - component: {fileID: 1296803925161360811}
   - component: {fileID: 3365075502140201400}
   - component: {fileID: 4559298792610461149}
+  - component: {fileID: 246515864735128824}
+  - component: {fileID: 3577258178730831919}
+  - component: {fileID: 8188534507171541140}
+  - component: {fileID: 6221709110144506322}
   m_Layer: 0
   m_Name: P1
   m_TagString: Untagged
@@ -244,9 +248,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   playerID: 0
-  playerRenderer: {fileID: 3898829420103296663}
-  p1Color: {r: 0.2, g: 0.8, b: 1, a: 1}
-  p2Color: {r: 1, g: 0.4, b: 0.1, a: 1}
+  playerRender: {fileID: 3898829420103296663}
+  player1Material: {fileID: 2100000, guid: b162a69b30ea9ea4faf8bcabdadf8069, type: 2}
+  player2Material: {fileID: 2100000, guid: d07c8e9749a9adc43a69baad4d4bd443, type: 2}
 --- !u!114 &3365075502140201400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,6 +283,64 @@ MonoBehaviour:
   currentStamina: 0
   regenRate: 15
   regenDelay: 1.5
+--- !u!114 &246515864735128824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5724691077250337975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f34ac4853ecc70140b9e0975e8a8e52b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrade
+--- !u!114 &3577258178730831919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5724691077250337975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d86d666d92d6a40af9f66e3a0ab5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeExecutor
+  explosionRadius: 4
+  explosionDamage: 35
+  explosionKnockback: 15
+  explosionUpForce: 6
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  freezeDuration: 2.5
+  teleportPoints: []
+--- !u!114 &8188534507171541140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5724691077250337975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f34ac4853ecc70140b9e0975e8a8e52b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrade
+--- !u!114 &6221709110144506322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5724691077250337975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b2ad36a186db82449fbb336b0e4a372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerKnockback
+  knockbackDecay: 8
 --- !u!1 &7396179357277388542
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,17 +5,23 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health")]
-    [SerializeField] float maxHealth = 100f;
-    [SerializeField] float currentHealth;
+    [SerializeField]
+    float maxHealth = 100f;
+
+    [SerializeField]
+    float currentHealth;
 
     [Header("Invisbility")]
-    [SerializeField] bool useInvincibility = true;
-    [SerializeField] float invincibilityDuration = 0.5f;
+    [SerializeField]
+    bool useInvincibility = true;
+
+    [SerializeField]
+    float invincibilityDuration = 0.5f;
 
     float invincibilityTimer;
-    bool isDead; 
+    bool isDead;
 
-    // UI and game systems will work with these 
+    // UI and game systems will work with these
     public event Action<float, float> OnHealthChanged;
     public event Action OnDeath;
 
@@ -26,12 +32,12 @@ public class PlayerHealth : MonoBehaviour
 
     void Awake()
     {
-        currentHealth = maxHealth; 
+        currentHealth = maxHealth;
     }
 
     void Update()
     {
-       if (invincibilityTimer > 0f)
+        if (invincibilityTimer > 0f)
         {
             invincibilityTimer -= Time.deltaTime;
         }
@@ -40,15 +46,17 @@ public class PlayerHealth : MonoBehaviour
     //This is what deals damage to the player
     public void TakeDamage(float amount)
     {
-        if (isDead) return;
-        if (useInvincibility && invincibilityTimer > 0f) return;
+        if (isDead)
+            return;
+        if (useInvincibility && invincibilityTimer > 0f)
+            return;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0f);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (useInvincibility)
         {
-            invincibilityTimer = invincibilityDuration; 
+            invincibilityTimer = invincibilityDuration;
 
             if (currentHealth <= 0f)
             {
@@ -59,10 +67,11 @@ public class PlayerHealth : MonoBehaviour
 
     public void Heal(float amount)
     {
-        if (isDead) return;
+        if (isDead)
+            return;
 
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        OnHealthChanged?.Invoke(currentHealth, maxHealth); 
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     //This is what will instantly kill the player
@@ -75,10 +84,11 @@ public class PlayerHealth : MonoBehaviour
 
     public void InstantKill()
     {
-        if (isDead) return;
+        if (isDead)
+            return;
         currentHealth = 0f;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
-        Die(); 
+        Die();
     }
 
     void Die()

@@ -19,7 +19,7 @@ public class EchoSpawner : MonoBehaviour
     float spawnInterval = 20f;
 
     [SerializeField]
-    float firstSpawnDelay = 5f; // short delay before first echo so round has time 2 start
+    float firstSpawnDelay = 5f;
 
     // track active echoes so  dont stack duplicates
     PlayerEcho activeP1Echo;
