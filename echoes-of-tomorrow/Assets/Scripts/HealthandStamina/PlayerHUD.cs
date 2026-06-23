@@ -1,17 +1,15 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
-    [Header("Player reference")]
+    [Header("which player this HUD tracks")]
     [SerializeField]
-    PlayerHealth playerHealth;
+    PlayerController.PlayerID trackedPlayer = PlayerController.PlayerID.P1;
 
-    [SerializeField]
-    PlayerStamina playerStamina;
-
-    [Header("Health bar")]
+    [Header("health bar")]
     [SerializeField]
     Image healthFill;
 
@@ -21,7 +19,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField]
     TMP_Text healthLabel;
 
-    [Header("Stamina bar")]
+    [Header("stamina bar")]
     [SerializeField]
     Image staminaFill;
 
@@ -31,51 +29,98 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField]
     TMP_Text staminaLabel;
 
-    [Header("Ghost bar settings")]
+    [Header("ghost bar settings")]
     [SerializeField]
     float drainSpeed = 2f;
 
-    [Header("Stamina regen pulse")]
+    [Header("stamina regen pulse")]
     [SerializeField]
     float pulseSpeed = 3f;
 
     [SerializeField]
     float pulseMinAlpha = 0.6f;
 
+    [Header("upgrade slot")]
+    [SerializeField]
+    Image upgradeIcon;
+
+    [SerializeField]
+    TMP_Text upgradeLabel;
+
+    [SerializeField]
+    Sprite defaultAttackSprite;
+
+    [SerializeField]
+    Sprite grenadeSprite;
+
+    [SerializeField]
+    Sprite fireMissileSprite;
+
+    [SerializeField]
+    Sprite iceSprite;
+
+    [SerializeField]
+    Sprite teleportSprite;
+
+    PlayerHealth playerHealth;
+    PlayerStamina playerStamina;
+    CombatSystem combatSystem;
+
     float targetHealthFill = 1f;
     float targetStaminaFill = 1f;
 
-    void OnEnable()
+    void Start()
     {
+        // players might not be spawned yet on the first frame
+
+        StartCoroutine(BindWhenReady());
+    }
+
+    IEnumerator BindWhenReady()
+    {
+        PlayerController player = null;
+
+        while (player == null)
+        {
+            player = PlayerRegistry.Get(trackedPlayer);
+            if (player == null)
+                yield return null; // wait a frame and try again
+        }
+
+        playerHealth = player.GetComponent<PlayerHealth>();
+        playerStamina = player.GetComponent<PlayerStamina>();
+        combatSystem = player.GetComponent<CombatSystem>();
+
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged += HandleHealthChanged;
             playerHealth.OnDeath += HandleDeath;
+            HandleHealthChanged(playerHealth.CurrentHealth, playerHealth.MaxHealth);
         }
 
         if (playerStamina != null)
+        {
             playerStamina.OnStaminaChanged += HandleStaminaChanged;
+            HandleStaminaChanged(playerStamina.CurrentStamina, playerStamina.MaxStamina);
+        }
+
+        if (combatSystem != null)
+            combatSystem.OnUpgradeChanged += HandleUpgradeChanged;
+
+        SetUpgradeIcon(null);
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged -= HandleHealthChanged;
             playerHealth.OnDeath -= HandleDeath;
         }
-
         if (playerStamina != null)
             playerStamina.OnStaminaChanged -= HandleStaminaChanged;
-    }
-
-    void Start()
-    {
-        if (playerHealth != null)
-            HandleHealthChanged(playerHealth.CurrentHealth, playerHealth.MaxHealth);
-
-        if (playerStamina != null)
-            HandleStaminaChanged(playerStamina.CurrentStamina, playerStamina.MaxStamina);
+        if (combatSystem != null)
+            combatSystem.OnUpgradeChanged -= HandleUpgradeChanged;
     }
 
     void Update()
@@ -85,17 +130,12 @@ public class PlayerHUD : MonoBehaviour
         AnimateStaminaPulse();
     }
 
-    //Event handlers
-
     void HandleHealthChanged(float current, float max)
     {
         float pct = max > 0f ? current / max : 0f;
-
         if (healthFill != null)
             healthFill.fillAmount = pct;
-
         targetHealthFill = pct;
-
         if (healthLabel != null)
             healthLabel.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
     }
@@ -103,12 +143,9 @@ public class PlayerHUD : MonoBehaviour
     void HandleStaminaChanged(float current, float max)
     {
         float pct = max > 0f ? current / max : 0f;
-
         if (staminaFill != null)
             staminaFill.fillAmount = pct;
-
         targetStaminaFill = pct;
-
         if (staminaLabel != null)
             staminaLabel.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
     }
@@ -120,7 +157,37 @@ public class PlayerHUD : MonoBehaviour
             group.alpha = 0.4f;
     }
 
-    //Ghost bar animation
+    void HandleUpgradeChanged(UpgradeType? upgrade)
+    {
+        SetUpgradeIcon(upgrade);
+    }
+
+    void SetUpgradeIcon(UpgradeType? upgrade)
+    {
+        if (upgradeIcon != null)
+        {
+            upgradeIcon.sprite = upgrade switch
+            {
+                UpgradeType.Grenade => grenadeSprite,
+                UpgradeType.FireMissile => fireMissileSprite,
+                UpgradeType.IceFreeze => iceSprite,
+                UpgradeType.Teleport => teleportSprite,
+                _ => defaultAttackSprite,
+            };
+        }
+
+        if (upgradeLabel != null)
+        {
+            upgradeLabel.text = upgrade switch
+            {
+                UpgradeType.Grenade => "grenade",
+                UpgradeType.FireMissile => "fire missile",
+                UpgradeType.IceFreeze => "ice freeze",
+                UpgradeType.Teleport => "teleport",
+                _ => "default shot",
+            };
+        }
+    }
 
     void AnimateGhostBar(Image ghost, ref float target)
     {
@@ -129,16 +196,12 @@ public class PlayerHUD : MonoBehaviour
         ghost.fillAmount = Mathf.MoveTowards(ghost.fillAmount, target, drainSpeed * Time.deltaTime);
     }
 
-    //Stamina regen pulse
-
     void AnimateStaminaPulse()
     {
         if (staminaFill == null || playerStamina == null)
             return;
         if (!playerStamina.IsRegenerating)
             return;
-
-        // Gently pulse alpha to signal regen is active
         float alpha = Mathf.Lerp(
             pulseMinAlpha,
             1f,

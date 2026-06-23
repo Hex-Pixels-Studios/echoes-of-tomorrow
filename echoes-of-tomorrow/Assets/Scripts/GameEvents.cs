@@ -2,17 +2,14 @@ using System;
 
 public static class GameEvents
 {
-    // Match Flow
     public static event Action OnMatchStarted;
     public static event Action OnMatchEnded;
     public static event Action<int> OnPlayerKilled;
 
-    // Echo System
     public static event Action<int> OnEchoSpawned;
     public static event Action<int> OnEchoCollected;
     public static event Action<int> OnUpgradeChosen;
 
-    // Countdown
     public static event Action OnCountdownTick;
     public static event Action OnCountdownEnd;
 

@@ -224,6 +224,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3186111a-c49e-4737-9b00-924400b245ab
     m_ActionName: 'Player/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cdd7d663-b1d9-47e3-9a09-ead86c975d50
+    m_ActionName: 'Player/Attack[/Keyboard/e,/XInputControllerWindows/rightTrigger]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

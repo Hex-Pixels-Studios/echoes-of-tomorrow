@@ -34,7 +34,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Use",
+                    "name": "Attack",
                     "type": "Button",
                     "id": "cdd7d663-b1d9-47e3-9a09-ead86c975d50",
                     "expectedControlType": "",
@@ -161,7 +161,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardMouse",
-                    "action": "Use",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -172,7 +172,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Use",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
