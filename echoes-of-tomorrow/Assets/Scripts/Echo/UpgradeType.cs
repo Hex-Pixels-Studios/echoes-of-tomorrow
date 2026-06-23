@@ -1,14 +1,14 @@
 public enum UpgradeType
 {
-    // combat - held until player presses Use
+    // combat - haaave to press use acton
     Grenade,
     FireMissile,
     IceFreeze,
     Teleport,
 
     // vitals - applied instantly on echo collection, no  press needed
-    HealSmall, // restore 30 health
-    HealFull, // full health restore
+    HealSmall,
+    HealFull,
     StaminaBoost, // restore 40 stamina
     StaminaFull, // full stamina restore
 }

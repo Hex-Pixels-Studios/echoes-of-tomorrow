@@ -267,7 +267,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: cdd7d663-b1d9-47e3-9a09-ead86c975d50
-    m_ActionName: 'Player/Use[/Keyboard/e,/XInputControllerWindows/rightTrigger]'
+
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

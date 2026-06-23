@@ -21,7 +21,6 @@ public class PlayerHealth : MonoBehaviour
     float invincibilityTimer;
     bool isDead;
 
-    // UI and game systems will work with these
     public event Action<float, float> OnHealthChanged;
     public event Action OnDeath;
 
@@ -43,7 +42,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    //This is what deals damage to the player
     public void TakeDamage(float amount)
     {
         if (isDead)
@@ -73,8 +71,6 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
-
-    //This is what will instantly kill the player
 
     public void IncreaseMaxHealth(float amount)
     {

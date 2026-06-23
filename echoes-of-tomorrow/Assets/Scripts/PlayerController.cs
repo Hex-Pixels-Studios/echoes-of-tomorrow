@@ -1,7 +1,8 @@
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     [Header("movement")]
@@ -48,15 +49,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     PlayerID playerID = PlayerID.P1;
 
-    [SerializeField] private Renderer playerRender;
+    [SerializeField]
+    Renderer playerRenderer;
 
-    [SerializeField] private Material player1Material;
+    [SerializeField]
+    Material player1Material;
 
-    [SerializeField] private Material player2Material;
+    [SerializeField]
+    Material player2Material;
 
     CharacterController cc;
     PlayerInput playerInput;
-
     InputAction moveAction;
     InputAction jumpAction;
 
@@ -77,19 +80,20 @@ public class PlayerController : MonoBehaviour
 
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
+
+        PlayerRegistry.Register(this);
+    }
+
+    void OnDestroy()
+    {
+        PlayerRegistry.Unregister(this);
     }
 
     void Start()
     {
-        ApplyPlayerColor();
-    }
-
-    void ApplyPlayerColor()
-    {
-        if (playerRender == null)
-            return;
-
-        playerRender.material = playerInput.playerIndex == 0 ? player1Material : player2Material;
+        if (playerRenderer != null)
+            playerRenderer.material =
+                playerInput.playerIndex == 0 ? player1Material : player2Material;
     }
 
     void OnEnable() => jumpAction.performed += OnJumpPressed;
@@ -122,21 +126,15 @@ public class PlayerController : MonoBehaviour
     void HandleMovement()
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
-
-        // world space - camera is fixed topdown so world forward/right maps directly to wasd/stick
         Vector3 moveDir = new Vector3(input.x, 0f, input.y).normalized;
-
-        // cache for rotation to follow
         if (moveDir.sqrMagnitude > 0.01f)
             moveDirection = moveDir;
-
         float rate = moveDir.sqrMagnitude > 0.01f ? acceleration : deceleration;
         velocity = Vector3.MoveTowards(velocity, moveDir * moveSpeed, rate * Time.deltaTime);
     }
 
     void HandleRotation()
     {
-        // rotate to face the direction of movement - no look action needed
         if (moveDirection.sqrMagnitude > 0.01f)
         {
             Quaternion targetRot = Quaternion.LookRotation(moveDirection);
@@ -156,7 +154,6 @@ public class PlayerController : MonoBehaviour
             if (jumpBufferTimer <= 0f)
                 jumpBuffered = false;
         }
-
         if (jumpBuffered && isGrounded)
         {
             verticalVelocity = Mathf.Sqrt(2f * Mathf.Abs(gravity) * jumpHeight);
@@ -190,6 +187,5 @@ public class PlayerController : MonoBehaviour
     public float VerticalVelocity => verticalVelocity;
     public Vector3 FacingDirection =>
         moveDirection.sqrMagnitude > 0f ? moveDirection.normalized : transform.forward;
-
     public PlayerID ID => playerID;
 }

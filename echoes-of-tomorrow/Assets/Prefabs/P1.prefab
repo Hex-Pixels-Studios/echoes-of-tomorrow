@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1705068438886760307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5046633378288726560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8208729711829959718}
+  m_Layer: 0
+  m_Name: Firepoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8208729711829959718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5046633378288726560}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.55}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1705068438886760307}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5724691077250337975
 GameObject:
   m_ObjectHideFlags: 0
@@ -52,6 +83,7 @@ GameObject:
   - component: {fileID: 3577258178730831919}
   - component: {fileID: 8188534507171541140}
   - component: {fileID: 6221709110144506322}
+  - component: {fileID: 8948181171361475017}
   m_Layer: 0
   m_Name: P1
   m_TagString: Untagged
@@ -74,6 +106,7 @@ Transform:
   m_Children:
   - {fileID: 4426375759746873646}
   - {fileID: 5245311780691720100}
+  - {fileID: 8208729711829959718}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5133646065318960321
@@ -218,6 +251,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3186111a-c49e-4737-9b00-924400b245ab
     m_ActionName: 'Player/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cdd7d663-b1d9-47e3-9a09-ead86c975d50
+    m_ActionName: 'Player/Attack[/Keyboard/e,/XInputControllerWindows/rightTrigger]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -248,7 +285,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   playerID: 0
-  playerRender: {fileID: 3898829420103296663}
+  playerRenderer: {fileID: 3898829420103296663}
   player1Material: {fileID: 2100000, guid: b162a69b30ea9ea4faf8bcabdadf8069, type: 2}
   player2Material: {fileID: 2100000, guid: d07c8e9749a9adc43a69baad4d4bd443, type: 2}
 --- !u!114 &3365075502140201400
@@ -302,7 +339,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5724691077250337975}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5d86d666d92d6a40af9f66e3a0ab5d4, type: 3}
   m_Name: 
@@ -341,6 +378,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerKnockback
   knockbackDecay: 8
+--- !u!114 &8948181171361475017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5724691077250337975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d24bf644bc860749b148dfa59ea7e32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatSystem
+  defaultProjectilePrefab: {fileID: 2287748287219235177, guid: 8de037e4730997c449c6278822d8f129, type: 3}
+  grenadeProjectilePrefab: {fileID: 2287748287219235177, guid: 14c012a22e6f5b14c8dddee6e750b608, type: 3}
+  fireMissileProjectilePrefab: {fileID: 2287748287219235177, guid: 7404c9d284c14d14790bb22c7bb62c4d, type: 3}
+  firePoint: {fileID: 8208729711829959718}
+  defaultDamage: 10
+  defaultSpeed: 14
+  defaultKnockback: 5
+  defaultKnockbackUp: 2
+  defaultLifetime: 2
+  defaultFireRate: 0.4
+  grenadeDamage: 35
+  grenadeSpeed: 10
+  grenadeKnockback: 15
+  grenadeKnockbackUp: 6
+  grenadeLifetime: 3
+  missileDamage: 45
+  missileSpeed: 20
+  missileKnockback: 18
+  missileKnockbackUp: 5
+  missileLifetime: 4
+  freezeDuration: 2.5
+  teleportPoints: []
 --- !u!1 &7396179357277388542
 GameObject:
   m_ObjectHideFlags: 0
