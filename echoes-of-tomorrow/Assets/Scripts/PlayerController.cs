@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -47,14 +48,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     PlayerID playerID = PlayerID.P1;
 
-    [SerializeField]
-    Renderer playerRenderer;
+    [SerializeField] private Renderer playerRender;
 
-    [SerializeField]
-    Color p1Color = new Color(0.2f, 0.8f, 1f);
+    [SerializeField] private Material player1Material;
 
-    [SerializeField]
-    Color p2Color = new Color(1f, 0.4f, 0.1f);
+    [SerializeField] private Material player2Material;
 
     CharacterController cc;
     PlayerInput playerInput;
@@ -88,11 +86,10 @@ public class PlayerController : MonoBehaviour
 
     void ApplyPlayerColor()
     {
-        if (playerRenderer == null)
+        if (playerRender == null)
             return;
 
-        Color color = playerID == PlayerID.P1 ? p1Color : p2Color;
-        playerRenderer.material.color = color;
+        playerRender.material = playerInput.playerIndex == 0 ? player1Material : player2Material;
     }
 
     void OnEnable() => jumpAction.performed += OnJumpPressed;
