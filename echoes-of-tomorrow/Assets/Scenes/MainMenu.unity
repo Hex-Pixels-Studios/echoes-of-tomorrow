@@ -491,29 +491,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fc0f27cf4a477143a2faa194d498f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  menuMusic: {fileID: 0}
-  gameplayMusic: {fileID: 0}
-  victoryMusic: {fileID: 0}
-  projectileLaunchClip: {fileID: 0}
-  projectileHitClip: {fileID: 0}
-  grenadeThrowClip: {fileID: 0}
-  grenadeExplosionClip: {fileID: 0}
-  missileLaunchClip: {fileID: 0}
-  missileHitClip: {fileID: 0}
-  iceFreezeClip: {fileID: 0}
-  iceUnfreezeClip: {fileID: 0}
-  teleportClip: {fileID: 0}
-  echoSpawnClip: {fileID: 0}
-  echoCollectClip: {fileID: 0}
-  echoRejectClip: {fileID: 0}
-  upgradeChosenClip: {fileID: 0}
-  playerHitClip: {fileID: 0}
-  playerDeathClip: {fileID: 0}
-  playerJumpClip: {fileID: 0}
-  playerLandClip: {fileID: 0}
-  playerKnockbackClip: {fileID: 0}
-  playerHealClip: {fileID: 0}
-  staminaRestoreClip: {fileID: 0}
+  menuMusic: {fileID: 8300000, guid: 6bb31d1fb3722c34da413224b00d89c8, type: 3}
+  gameplayMusic: {fileID: 8300000, guid: 55a62566ddb2e3446aea1f350059d2e0, type: 3}
+  victoryMusic: {fileID: 8300000, guid: cd4c94359c97ec44f82da18e9c3901f1, type: 3}
+  projectileLaunchClip: {fileID: 8300000, guid: c96006a464c901c43b3c12e950ffe3e0, type: 3}
+  projectileHitClip: {fileID: 8300000, guid: 560bc50104446e7409d64ceef9d602f6, type: 3}
+  grenadeThrowClip: {fileID: 8300000, guid: 67fc531afbf6ffb4682dabec4dbf4648, type: 3}
+  grenadeExplosionClip: {fileID: 8300000, guid: 107ebc7cba78a9e4eb85f9034e87188d, type: 3}
+  missileLaunchClip: {fileID: 8300000, guid: 77b4695ddec791f49a639995d5fe4fde, type: 3}
+  missileHitClip: {fileID: 8300000, guid: 39965b4d9e0efc245845b2128e1c1808, type: 3}
+  iceFreezeClip: {fileID: 8300000, guid: 731e2d357db301444b04736829e75fca, type: 3}
+  iceUnfreezeClip: {fileID: 8300000, guid: 3b1ece62026562b4ca9b431b87906ee6, type: 3}
+  teleportClip: {fileID: 8300000, guid: 163a6b1ceabcce746891334dcbd5fbbb, type: 3}
+  echoSpawnClip: {fileID: 8300000, guid: 1ee4409ae4da39644b8b972c3cd3fc7f, type: 3}
+  echoCollectClip: {fileID: 8300000, guid: 641dc61074865ec4eb1121f62c3d4058, type: 3}
+  echoRejectClip: {fileID: 8300000, guid: 0ecd4e3358e44064a86a12cf44fa47ae, type: 3}
+  upgradeChosenClip: {fileID: 8300000, guid: 4c937ad6500f57e44b6ccc033cacb19d, type: 3}
+  playerHitClip: {fileID: 8300000, guid: ca943aa57c0fac3499be2ff7aa052ec7, type: 3}
+  playerDeathClip: {fileID: 8300000, guid: 1aae5e817fdc31f4aa6df7c908eca419, type: 3}
+  playerJumpClip: {fileID: 8300000, guid: 996b7f08b2fc7dc42be7c5fc0bbd3dc7, type: 3}
+  playerLandClip: {fileID: 8300000, guid: 4e93e54be42a23741b365987dda21136, type: 3}
+  playerKnockbackClip: {fileID: 8300000, guid: 1ee4409ae4da39644b8b972c3cd3fc7f, type: 3}
+  playerHealClip: {fileID: 8300000, guid: 8ac06d2745ded564db742305ad3ff646, type: 3}
+  staminaRestoreClip: {fileID: 8300000, guid: 9d63210e057772841aa38c2fb5b6a984, type: 3}
   countdownTickClip: {fileID: 0}
   countdownGoClip: {fileID: 0}
   winStingerClip: {fileID: 0}
