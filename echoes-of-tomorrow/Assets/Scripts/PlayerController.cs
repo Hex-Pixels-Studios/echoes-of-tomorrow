@@ -39,6 +39,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     LayerMask groundMask;
 
+    [Header("camera")]
+    [SerializeField]
+    Vector3 cameraOffset = new Vector3(0f, 12f, -6f);
+
+    [SerializeField]
+    float cameraFollowSpeed = 8f;
+
+    [SerializeField]
+    float cameraRotationX = 55f;
+
     public enum PlayerID
     {
         P1,
@@ -73,6 +83,8 @@ public class PlayerController : MonoBehaviour
 
     Vector3 moveDirection;
 
+    Camera playerCamera;
+
     void Awake()
     {
         cc = GetComponent<CharacterController>();
@@ -81,19 +93,51 @@ public class PlayerController : MonoBehaviour
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
 
+        SpawnCamera();
         PlayerRegistry.Register(this);
     }
 
     void OnDestroy()
     {
         PlayerRegistry.Unregister(this);
+        if (playerCamera != null)
+            Destroy(playerCamera.gameObject);
+    }
+
+    void SpawnCamera()
+    {
+        GameObject camObj = new GameObject($"Camera_{playerID}");
+        playerCamera = camObj.AddComponent<Camera>();
+        playerCamera.fieldOfView = 65f;
+
+        var follow = camObj.AddComponent<PlayerCamera>();
+        follow.Init(transform);
+
+        camObj.transform.position = transform.position + cameraOffset;
+        camObj.transform.rotation = Quaternion.Euler(cameraRotationX, 0f, 0f);
+
+        if (playerID == PlayerID.P1)
+            camObj.AddComponent<AudioListener>();
     }
 
     void Start()
     {
         if (playerRenderer != null)
-            playerRenderer.material =
-                playerInput.playerIndex == 0 ? player1Material : player2Material;
+            playerRenderer.material = playerID == PlayerID.P1 ? player1Material : player2Material;
+    }
+
+    public void ResetPlayer()
+    {
+        velocity = Vector3.zero;
+        verticalVelocity = 0f;
+        jumpBuffered = false;
+
+        GetComponent<PlayerHealth>()?.Heal(float.MaxValue);
+        GetComponent<PlayerStamina>()?.AddStamina(float.MaxValue);
+        GetComponent<PlayerUpgrade>()?.ConsumeUpgrade();
+
+        if (!enabled)
+            enabled = true;
     }
 
     void OnEnable() => jumpAction.performed += OnJumpPressed;
@@ -126,9 +170,21 @@ public class PlayerController : MonoBehaviour
     void HandleMovement()
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
-        Vector3 moveDir = new Vector3(input.x, 0f, input.y).normalized;
+
+        Vector3 camForward =
+            playerCamera != null
+                ? Vector3.ProjectOnPlane(playerCamera.transform.forward, Vector3.up).normalized
+                : Vector3.forward;
+        Vector3 camRight =
+            playerCamera != null
+                ? Vector3.ProjectOnPlane(playerCamera.transform.right, Vector3.up).normalized
+                : Vector3.right;
+
+        Vector3 moveDir = (camForward * input.y + camRight * input.x).normalized;
+
         if (moveDir.sqrMagnitude > 0.01f)
             moveDirection = moveDir;
+
         float rate = moveDir.sqrMagnitude > 0.01f ? acceleration : deceleration;
         velocity = Vector3.MoveTowards(velocity, moveDir * moveSpeed, rate * Time.deltaTime);
     }
@@ -182,6 +238,8 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 
+    public Camera PlayerCamera => playerCamera;
+    public int PlayerIndex => playerInput.playerIndex;
     public Vector3 Velocity => velocity;
     public bool IsGrounded => isGrounded;
     public float VerticalVelocity => verticalVelocity;
