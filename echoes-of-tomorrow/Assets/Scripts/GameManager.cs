@@ -101,24 +101,10 @@ public class GameManager : MonoBehaviour
 
         GameEvents.MatchEnded();
 
-        // show win screen -
+        // show win screen - it owns the rematch countdown internally
         winScreenUI?.Show(winner.ID);
 
-        StartCoroutine(RematchAfterDelay());
-    }
-
-    IEnumerator RematchAfterDelay()
-    {
-        yield return new WaitForSecondsRealtime(4f);
-        ResetRound();
-    }
-
-    void ResetRound()
-    {
-        ResetPlayer(player1, spawnPointP1);
-        ResetPlayer(player2, spawnPointP2);
-        roundActive = true;
-        GameEvents.MatchStarted();
+        // win screen owns the rematch - it reloads the scene when countdown ends
     }
 
     void ResetPlayer(PlayerController player, Transform spawnPoint)
@@ -211,7 +197,7 @@ public class GameManager : MonoBehaviour
 
         if (cam1 == null || cam2 == null)
         {
-            Debug.LogError("GameManager: NO FUCKIN CAMERAS");
+            Debug.LogError("GameManager: no fucking camerassss");
             return;
         }
 

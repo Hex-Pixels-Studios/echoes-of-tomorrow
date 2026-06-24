@@ -105,12 +105,12 @@ public class WinScreenUI : MonoBehaviour
         rootGroup.alpha = 0f;
         rootGroup.interactable = false;
         rootGroup.blocksRaycasts = false;
-        // keep the GameObject active so coroutines can always start
-        // visibility is controlled by alpha alone
     }
 
     IEnumerator ShowRoutine(PlayerController.PlayerID winner)
     {
+        Time.timeScale = 0f;
+
         Color playerColor = winner == PlayerController.PlayerID.P1 ? p1Color : p2Color;
         string playerName = winner == PlayerController.PlayerID.P1 ? "PLAYER 1" : "PLAYER 2";
 
@@ -171,7 +171,7 @@ public class WinScreenUI : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.4f);
 
         yield return StartCoroutine(FadeGroup(rootGroup, 0f, 0.25f));
-        Hide();
+        Rematch();
     }
 
     void CancelCountdown()
@@ -205,6 +205,7 @@ public class WinScreenUI : MonoBehaviour
     void OnQuit()
     {
         CancelCountdown();
+        Time.timeScale = 1f;
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -254,8 +255,15 @@ public class WinScreenUI : MonoBehaviour
         creditsPanel.gameObject.SetActive(false);
     }
 
+    void Rematch()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     IEnumerator FadeAndLoad(string sceneName)
     {
+        Time.timeScale = 1f;
         yield return StartCoroutine(FadeGroup(rootGroup, 0f, 0.3f));
         SceneManager.LoadScene(sceneName);
     }
