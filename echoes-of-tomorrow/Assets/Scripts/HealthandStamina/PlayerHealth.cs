@@ -38,6 +38,8 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
+        GameEvents.PlayerHit((int)GetComponent<PlayerController>().ID);
+
         if (isDead)
             return;
         if (useInvincibility && invincibilityTimer > 0f)
@@ -55,6 +57,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void Heal(float amount)
     {
+        GameEvents.PlayerHealed((int)GetComponent<PlayerController>().ID);
         if (isDead)
             return;
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
@@ -76,7 +79,6 @@ public class PlayerHealth : MonoBehaviour
         Die();
     }
 
-
     public void ResetHealth()
     {
         isDead = false;
@@ -87,6 +89,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
+        GameEvents.PlayerKilled((int)GetComponent<PlayerController>().ID);
         isDead = true;
 
         // stop the player moving

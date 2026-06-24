@@ -105,7 +105,8 @@ public class WinScreenUI : MonoBehaviour
         rootGroup.alpha = 0f;
         rootGroup.interactable = false;
         rootGroup.blocksRaycasts = false;
-        rootGroup.gameObject.SetActive(false);
+        // keep the GameObject active so coroutines can always start
+        // visibility is controlled by alpha alone
     }
 
     IEnumerator ShowRoutine(PlayerController.PlayerID winner)
@@ -121,7 +122,7 @@ public class WinScreenUI : MonoBehaviour
         if (accentBar != null)
             accentBar.color = playerColor;
 
-        rootGroup.gameObject.SetActive(true);
+        // flash
         HideCredits();
 
         if (glitchOverlay != null)

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,23 +27,13 @@ public class GameManager : MonoBehaviour
 
     [Header("win screen")]
     [SerializeField]
-    GameObject winScreen;
-
-    [SerializeField]
-    TMP_Text winLabel;
-
-    [SerializeField]
-    float rematchDelay = 4f;
+    WinScreenUI winScreenUI;
 
     public enum SplitMode
     {
         SideBySide,
         TopAndBottom,
     }
-
-    [Header("win screen")]
-    [SerializeField]
-    WinScreenUI winScreenUI;
 
     PlayerController player1;
     PlayerController player2;
@@ -62,8 +51,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        if (winScreen != null)
-            winScreen.SetActive(false);
         StartCoroutine(SpawnNextFrame());
     }
 
@@ -96,7 +83,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // whoever dies  other wins
         player1.GetComponent<PlayerHealth>().OnDeath += () => DeclareWinner(player2);
         player2.GetComponent<PlayerHealth>().OnDeath += () => DeclareWinner(player1);
 
@@ -104,7 +90,7 @@ public class GameManager : MonoBehaviour
         SetupSplitScreen(player1, player2);
 
         roundActive = true;
-        // Debug.Log("round started");
+        GameEvents.MatchStarted();
     }
 
     void DeclareWinner(PlayerController winner)
@@ -113,21 +99,17 @@ public class GameManager : MonoBehaviour
             return;
         roundActive = false;
 
-        Debug.Log($"{winner.name} wins");
+        GameEvents.MatchEnded();
 
-        if (winScreen != null)
-            winScreen.SetActive(true);
-        if (winLabel != null)
-            winLabel.text = $"{winner.name} wins!";
+        // show win screen -
+        winScreenUI?.Show(winner.ID);
 
-        StartCoroutine(RematchCountdown());
+        StartCoroutine(RematchAfterDelay());
     }
 
-    IEnumerator RematchCountdown()
+    IEnumerator RematchAfterDelay()
     {
-        yield return new WaitForSeconds(rematchDelay);
-        if (winScreen != null)
-            winScreen.SetActive(false);
+        yield return new WaitForSecondsRealtime(4f);
         ResetRound();
     }
 
@@ -136,7 +118,7 @@ public class GameManager : MonoBehaviour
         ResetPlayer(player1, spawnPointP1);
         ResetPlayer(player2, spawnPointP2);
         roundActive = true;
-        Debug.Log("round reset");
+        GameEvents.MatchStarted();
     }
 
     void ResetPlayer(PlayerController player, Transform spawnPoint)
@@ -202,7 +184,7 @@ public class GameManager : MonoBehaviour
         }
         else if (kb != null && kbScheme != null)
         {
-            Debug.LogWarning("GameManager: only keyboard - both players sharing it");
+            Debug.LogWarning("GameManager: only keyboard found - both players sharing it");
             p1Input.SwitchCurrentControlScheme(kbScheme, kb);
             p2Input.SwitchCurrentControlScheme(kbScheme, kb);
         }
@@ -229,7 +211,7 @@ public class GameManager : MonoBehaviour
 
         if (cam1 == null || cam2 == null)
         {
-            Debug.LogError("GameManager: player cameras null");
+            Debug.LogError("GameManager: NO FUCKIN CAMERAS");
             return;
         }
 

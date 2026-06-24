@@ -5,36 +5,47 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("Music")]
+    [Header("music")]
     public AudioClip menuMusic;
     public AudioClip gameplayMusic;
     public AudioClip victoryMusic;
 
-    [Header("Weapons")]
+    [Header("combat - projectiles")]
     public AudioClip projectileLaunchClip;
     public AudioClip projectileHitClip;
     public AudioClip grenadeThrowClip;
     public AudioClip grenadeExplosionClip;
+    public AudioClip missileLaunchClip;
+    public AudioClip missileHitClip;
 
-    [Header("Echoes")]
+    [Header("combat ")]
+    public AudioClip iceFreezeClip;
+    public AudioClip iceUnfreezeClip;
+    public AudioClip teleportClip;
+
+    [Header("echoes")]
     public AudioClip echoSpawnClip;
     public AudioClip echoCollectClip;
+    public AudioClip echoRejectClip; // wrong player bounced away
     public AudioClip upgradeChosenClip;
 
-    [Header("Player")]
-    public AudioClip dashClip;
+    [Header("player")]
     public AudioClip playerHitClip;
     public AudioClip playerDeathClip;
+    public AudioClip playerJumpClip;
+    public AudioClip playerLandClip;
+    public AudioClip playerKnockbackClip;
+    public AudioClip playerHealClip;
+    public AudioClip staminaRestoreClip;
 
-    [Header("Countdown")]
+    [Header(" ui")]
     public AudioClip countdownTickClip;
     public AudioClip countdownGoClip;
-
-    [Header("UI")]
+    public AudioClip winStingerClip; // short hit when win screen appears
     public AudioClip buttonHoverClip;
     public AudioClip buttonClickClip;
 
-    [Header("Volumes")]
+    [Header("volumes")]
     [SerializeField]
     float masterMusicVolume = 0.7f;
 
@@ -43,7 +54,7 @@ public class AudioManager : MonoBehaviour
 
     AudioSource musicSource;
 
-    const int SFX_POOL_SIZE = 10;
+    const int SFX_POOL_SIZE = 16;
     AudioSource[] sfxPool;
     int sfxPoolIndex;
 
@@ -54,7 +65,6 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
@@ -65,7 +75,6 @@ public class AudioManager : MonoBehaviour
         musicSource.volume = masterMusicVolume;
 
         sfxPool = new AudioSource[SFX_POOL_SIZE];
-
         for (int i = 0; i < SFX_POOL_SIZE; i++)
         {
             sfxPool[i] = gameObject.AddComponent<AudioSource>();
@@ -81,10 +90,27 @@ public class AudioManager : MonoBehaviour
 
         GameEvents.OnMatchStarted += HandleMatchStarted;
         GameEvents.OnMatchEnded += HandleMatchEnded;
+        GameEvents.OnWinScreenOpened += HandleWinScreenOpened;
 
-        GameEvents.OnEchoSpawned += HandleEchoSpawned;
-        GameEvents.OnEchoCollected += HandleEchoCollected;
-        GameEvents.OnUpgradeChosen += HandleUpgradeChosen;
+        GameEvents.OnPlayerHit += _ => PlaySfx(playerHitClip);
+        GameEvents.OnPlayerKilled += _ => PlaySfx(playerDeathClip);
+        GameEvents.OnPlayerJump += _ => PlaySfx(playerJumpClip);
+        GameEvents.OnPlayerLand += _ => PlaySfx(playerLandClip, 0.6f);
+        GameEvents.OnPlayerKnockback += _ => PlaySfx(playerKnockbackClip, 0.7f);
+        GameEvents.OnPlayerHealed += _ => PlaySfx(playerHealClip);
+        GameEvents.OnStaminaRestored += _ => PlaySfx(staminaRestoreClip, 0.8f);
+
+        GameEvents.OnEchoSpawned += _ => PlaySfx(echoSpawnClip);
+        GameEvents.OnEchoCollected += _ => PlaySfx(echoCollectClip);
+        GameEvents.OnEchoRejected += _ => PlaySfx(echoRejectClip);
+        GameEvents.OnUpgradeChosen += _ => PlaySfx(upgradeChosenClip);
+
+        GameEvents.OnProjectileFired += _ => PlaySfx(projectileLaunchClip);
+        GameEvents.OnProjectileHit += _ => PlaySfx(projectileHitClip);
+        GameEvents.OnGrenadeThrown += _ => PlaySfx(grenadeThrowClip);
+        GameEvents.OnGrenadeExploded += _ => PlaySfx(grenadeExplosionClip);
+        GameEvents.OnIceFreeze += _ => PlaySfx(iceFreezeClip);
+        GameEvents.OnTeleport += _ => PlaySfx(teleportClip);
 
         GameEvents.OnCountdownTick += HandleCountdownTick;
         GameEvents.OnCountdownEnd += HandleCountdownEnd;
@@ -96,10 +122,27 @@ public class AudioManager : MonoBehaviour
 
         GameEvents.OnMatchStarted -= HandleMatchStarted;
         GameEvents.OnMatchEnded -= HandleMatchEnded;
+        GameEvents.OnWinScreenOpened -= HandleWinScreenOpened;
 
-        GameEvents.OnEchoSpawned -= HandleEchoSpawned;
-        GameEvents.OnEchoCollected -= HandleEchoCollected;
-        GameEvents.OnUpgradeChosen -= HandleUpgradeChosen;
+        GameEvents.OnPlayerHit -= _ => PlaySfx(playerHitClip);
+        GameEvents.OnPlayerKilled -= _ => PlaySfx(playerDeathClip);
+        GameEvents.OnPlayerJump -= _ => PlaySfx(playerJumpClip);
+        GameEvents.OnPlayerLand -= _ => PlaySfx(playerLandClip, 0.6f);
+        GameEvents.OnPlayerKnockback -= _ => PlaySfx(playerKnockbackClip, 0.7f);
+        GameEvents.OnPlayerHealed -= _ => PlaySfx(playerHealClip);
+        GameEvents.OnStaminaRestored -= _ => PlaySfx(staminaRestoreClip, 0.8f);
+
+        GameEvents.OnEchoSpawned -= _ => PlaySfx(echoSpawnClip);
+        GameEvents.OnEchoCollected -= _ => PlaySfx(echoCollectClip);
+        GameEvents.OnEchoRejected -= _ => PlaySfx(echoRejectClip);
+        GameEvents.OnUpgradeChosen -= _ => PlaySfx(upgradeChosenClip);
+
+        GameEvents.OnProjectileFired -= _ => PlaySfx(projectileLaunchClip);
+        GameEvents.OnProjectileHit -= _ => PlaySfx(projectileHitClip);
+        GameEvents.OnGrenadeThrown -= _ => PlaySfx(grenadeThrowClip);
+        GameEvents.OnGrenadeExploded -= _ => PlaySfx(grenadeExplosionClip);
+        GameEvents.OnIceFreeze -= _ => PlaySfx(iceFreezeClip);
+        GameEvents.OnTeleport -= _ => PlaySfx(teleportClip);
 
         GameEvents.OnCountdownTick -= HandleCountdownTick;
         GameEvents.OnCountdownEnd -= HandleCountdownEnd;
@@ -111,58 +154,28 @@ public class AudioManager : MonoBehaviour
             PlayMusic(menuMusic);
     }
 
-    void HandleMatchStarted()
-    {
-        PlayMusic(gameplayMusic);
-    }
+    void HandleMatchStarted() => PlayMusic(gameplayMusic);
 
-    void HandleMatchEnded()
-    {
-        PlayMusic(victoryMusic);
-    }
+    void HandleMatchEnded() => PlayMusic(victoryMusic);
 
-    void HandleEchoSpawned(int playerIndex)
-    {
-        PlaySfx(echoSpawnClip);
-    }
+    void HandleWinScreenOpened() => PlaySfx(winStingerClip);
 
-    void HandleEchoCollected(int playerIndex)
-    {
-        PlaySfx(echoCollectClip);
-    }
+    void HandleCountdownTick() => PlaySfx(countdownTickClip);
 
-    void HandleUpgradeChosen(int playerIndex)
-    {
-        PlaySfx(upgradeChosenClip);
-    }
-
-    void HandleCountdownTick()
-    {
-        PlaySfx(countdownTickClip);
-    }
-
-    void HandleCountdownEnd()
-    {
-        PlaySfx(countdownGoClip);
-    }
+    void HandleCountdownEnd() => PlaySfx(countdownGoClip);
 
     public void PlayMusic(AudioClip clip)
     {
         if (clip == null)
             return;
-
         if (musicSource.clip == clip && musicSource.isPlaying)
             return;
-
         musicSource.Stop();
         musicSource.clip = clip;
         musicSource.Play();
     }
 
-    public void StopMusic()
-    {
-        musicSource.Stop();
-    }
+    public void StopMusic() => musicSource.Stop();
 
     public void PlaySfx(AudioClip clip, float volumeScale = 1f)
     {
@@ -170,11 +183,9 @@ public class AudioManager : MonoBehaviour
             return;
 
         AudioSource src = null;
-
         for (int i = 0; i < SFX_POOL_SIZE; i++)
         {
             int idx = (sfxPoolIndex + i) % SFX_POOL_SIZE;
-
             if (!sfxPool[idx].isPlaying)
             {
                 src = sfxPool[idx];
@@ -182,7 +193,6 @@ public class AudioManager : MonoBehaviour
                 break;
             }
         }
-
         if (src == null)
         {
             src = sfxPool[sfxPoolIndex];
@@ -198,18 +208,14 @@ public class AudioManager : MonoBehaviour
     {
         if (clip == null)
             return;
-
         AudioSource.PlayClipAtPoint(clip, position, masterSfxVolume * volumeScale);
     }
 
-    public void SetMusicVolume(float volume)
+    public void SetMusicVolume(float v)
     {
-        masterMusicVolume = Mathf.Clamp01(volume);
+        masterMusicVolume = Mathf.Clamp01(v);
         musicSource.volume = masterMusicVolume;
     }
 
-    public void SetSfxVolume(float volume)
-    {
-        masterSfxVolume = Mathf.Clamp01(volume);
-    }
+    public void SetSfxVolume(float v) => masterSfxVolume = Mathf.Clamp01(v);
 }

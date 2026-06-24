@@ -61,6 +61,10 @@ public class PlayerEcho : MonoBehaviour
 
     void CollectEcho(PlayerController player)
     {
+        GameEvents.EchoCollected((int)player.ID);
+        GameEvents.UpgradeChosen((int)player.ID);
+
+        
         bool pickcombat = UnityEngine.Random.value < combat_WEIGHT;
         UpgradeType upgrade = pickcombat
             ? combatPool[UnityEngine.Random.Range(0, combatPool.Length)]
@@ -115,6 +119,7 @@ public class PlayerEcho : MonoBehaviour
 
     void RejectPlayer(PlayerController player)
     {
+        GameEvents.EchoRejected((int)player.ID);
         PlayerKnockback knockback = player.GetComponent<PlayerKnockback>();
         if (knockback == null)
             return;
