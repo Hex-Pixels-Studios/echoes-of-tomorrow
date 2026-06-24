@@ -498,14 +498,25 @@ MonoBehaviour:
   projectileHitClip: {fileID: 0}
   grenadeThrowClip: {fileID: 0}
   grenadeExplosionClip: {fileID: 0}
+  missileLaunchClip: {fileID: 0}
+  missileHitClip: {fileID: 0}
+  iceFreezeClip: {fileID: 0}
+  iceUnfreezeClip: {fileID: 0}
+  teleportClip: {fileID: 0}
   echoSpawnClip: {fileID: 0}
   echoCollectClip: {fileID: 0}
+  echoRejectClip: {fileID: 0}
   upgradeChosenClip: {fileID: 0}
-  dashClip: {fileID: 0}
   playerHitClip: {fileID: 0}
   playerDeathClip: {fileID: 0}
+  playerJumpClip: {fileID: 0}
+  playerLandClip: {fileID: 0}
+  playerKnockbackClip: {fileID: 0}
+  playerHealClip: {fileID: 0}
+  staminaRestoreClip: {fileID: 0}
   countdownTickClip: {fileID: 0}
   countdownGoClip: {fileID: 0}
+  winStingerClip: {fileID: 0}
   buttonHoverClip: {fileID: 0}
   buttonClickClip: {fileID: 0}
   masterMusicVolume: 0.7
@@ -880,7 +891,7 @@ MonoBehaviour:
   controlsBackButton: {fileID: 0}
   creditsBackButton: {fileID: 0}
   creditsScroller: {fileID: 898355564}
-  gameSceneName: Game
+  gameSceneName: LevelDesign
 --- !u!4 &1978306745
 Transform:
   m_ObjectHideFlags: 0

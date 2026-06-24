@@ -132,12 +132,15 @@ public class PlayerController : MonoBehaviour
         verticalVelocity = 0f;
         jumpBuffered = false;
 
-        GetComponent<PlayerHealth>()?.Heal(float.MaxValue);
+        GetComponent<PlayerHealth>()?.ResetHealth();
         GetComponent<PlayerStamina>()?.AddStamina(float.MaxValue);
         GetComponent<PlayerUpgrade>()?.ConsumeUpgrade();
+        var kb = GetComponent<PlayerKnockback>();
+        if (kb != null)
+            kb.enabled = true;
 
-        if (!enabled)
-            enabled = true;
+        // if (!enabled)
+        //     enabled = true;
     }
 
     void OnEnable() => jumpAction.performed += OnJumpPressed;

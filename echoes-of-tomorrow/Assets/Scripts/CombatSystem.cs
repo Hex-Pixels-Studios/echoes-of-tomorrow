@@ -196,6 +196,7 @@ public class CombatSystem : MonoBehaviour
 
     void ExecuteIceFreeze()
     {
+        GameEvents.IceFreeze((int)GetComponent<PlayerController>().ID);
         var opponent = PlayerRegistry.GetOpponent(GetComponent<PlayerController>().ID);
         if (opponent != null)
             StartCoroutine(FreezeRoutine(opponent));
@@ -212,6 +213,7 @@ public class CombatSystem : MonoBehaviour
 
     void ExecuteTeleport()
     {
+        GameEvents.Teleport((int)GetComponent<PlayerController>().ID);
         if (teleportPoints == null || teleportPoints.Length == 0)
         {
             Debug.LogWarning("CombatSystem: no teleport points assigned");
