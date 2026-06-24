@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     [Header("player prefabs")]
     [SerializeField]
     GameObject player1Prefab;
@@ -23,19 +26,44 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     SplitMode splitMode = SplitMode.SideBySide;
 
+    [Header("win screen")]
+    [SerializeField]
+    GameObject winScreen;
+
+    [SerializeField]
+    TMP_Text winLabel;
+
+    [SerializeField]
+    float rematchDelay = 4f;
+
     public enum SplitMode
     {
         SideBySide,
         TopAndBottom,
     }
 
+    [Header("win screen")]
+    [SerializeField]
+    WinScreenUI winScreenUI;
+
     PlayerController player1;
     PlayerController player2;
-    List<PlayerController> alivePlayers = new();
     bool roundActive;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     void Start()
     {
+        if (winScreen != null)
+            winScreen.SetActive(false);
         StartCoroutine(SpawnNextFrame());
     }
 
@@ -68,50 +96,38 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        player1.GetComponent<PlayerHealth>().OnDeath += () => PlayerEliminated(player1);
-        player2.GetComponent<PlayerHealth>().OnDeath += () => PlayerEliminated(player2);
+        // whoever dies  other wins
+        player1.GetComponent<PlayerHealth>().OnDeath += () => DeclareWinner(player2);
+        player2.GetComponent<PlayerHealth>().OnDeath += () => DeclareWinner(player1);
 
         AssignInputDevices(p1Obj.GetComponent<PlayerInput>(), p2Obj.GetComponent<PlayerInput>());
         SetupSplitScreen(player1, player2);
 
-        alivePlayers.Clear();
-        alivePlayers.Add(player1);
-        alivePlayers.Add(player2);
-
         roundActive = true;
-        Debug.Log("round started");
+        // Debug.Log("round started");
     }
 
-    public void PlayerEliminated(PlayerController player)
+    void DeclareWinner(PlayerController winner)
     {
         if (!roundActive)
             return;
-
-        alivePlayers.Remove(player);
-        Debug.Log($"{player.name} eliminated");
-
-        CheckWinCondition();
-    }
-
-    void CheckWinCondition()
-    {
-        if (alivePlayers.Count > 1)
-            return;
-
         roundActive = false;
 
-        if (alivePlayers.Count == 1)
-            Debug.Log($"winner: {alivePlayers[0].name}");
-        else
-            Debug.Log("draw");
+        Debug.Log($"{winner.name} wins");
+
+        if (winScreen != null)
+            winScreen.SetActive(true);
+        if (winLabel != null)
+            winLabel.text = $"{winner.name} wins!";
 
         StartCoroutine(RematchCountdown());
     }
 
     IEnumerator RematchCountdown()
     {
-        Debug.Log("rematch in 3...");
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(rematchDelay);
+        if (winScreen != null)
+            winScreen.SetActive(false);
         ResetRound();
     }
 
@@ -119,11 +135,6 @@ public class GameManager : MonoBehaviour
     {
         ResetPlayer(player1, spawnPointP1);
         ResetPlayer(player2, spawnPointP2);
-
-        alivePlayers.Clear();
-        alivePlayers.Add(player1);
-        alivePlayers.Add(player2);
-
         roundActive = true;
         Debug.Log("round reset");
     }
@@ -134,7 +145,6 @@ public class GameManager : MonoBehaviour
             return;
         player.gameObject.SetActive(true);
 
-        // disable cc briefly so position warp works
         var cc = player.GetComponent<CharacterController>();
         cc.enabled = false;
         player.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
@@ -192,7 +202,7 @@ public class GameManager : MonoBehaviour
         }
         else if (kb != null && kbScheme != null)
         {
-            Debug.LogWarning("GameManager: only keyboard found - both players sharing it");
+            Debug.LogWarning("GameManager: only keyboard - both players sharing it");
             p1Input.SwitchCurrentControlScheme(kbScheme, kb);
             p2Input.SwitchCurrentControlScheme(kbScheme, kb);
         }
@@ -219,9 +229,7 @@ public class GameManager : MonoBehaviour
 
         if (cam1 == null || cam2 == null)
         {
-            Debug.LogError(
-                "GameManager: player cameras are null - SpawnCamera may not have run yet"
-            );
+            Debug.LogError("GameManager: player cameras null");
             return;
         }
 
@@ -239,7 +247,6 @@ public class GameManager : MonoBehaviour
         cam1.depth = 0;
         cam2.depth = 1;
 
-        // kill the scene's main camera - the player cameras take over
         if (Camera.main != null && Camera.main != cam1 && Camera.main != cam2)
             Camera.main.gameObject.SetActive(false);
     }

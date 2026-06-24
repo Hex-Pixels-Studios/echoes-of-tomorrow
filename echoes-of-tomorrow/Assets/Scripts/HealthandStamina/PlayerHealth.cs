@@ -1,17 +1,16 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [Header("Health")]
+    [Header("health")]
     [SerializeField]
     float maxHealth = 100f;
 
     [SerializeField]
     float currentHealth;
 
-    [Header("Invisbility")]
+    [Header("invincibility")]
     [SerializeField]
     bool useInvincibility = true;
 
@@ -29,17 +28,12 @@ public class PlayerHealth : MonoBehaviour
     public float HealthPercent => currentHealth / maxHealth;
     public bool IsDead => isDead;
 
-    void Awake()
-    {
-        currentHealth = maxHealth;
-    }
+    void Awake() => currentHealth = maxHealth;
 
     void Update()
     {
         if (invincibilityTimer > 0f)
-        {
             invincibilityTimer -= Time.deltaTime;
-        }
     }
 
     public void TakeDamage(float amount)
@@ -53,21 +47,16 @@ public class PlayerHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (useInvincibility)
-        {
             invincibilityTimer = invincibilityDuration;
 
-            if (currentHealth <= 0f)
-            {
-                Die();
-            }
-        }
+        if (currentHealth <= 0f)
+            Die();
     }
 
     public void Heal(float amount)
     {
         if (isDead)
             return;
-
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
@@ -87,12 +76,30 @@ public class PlayerHealth : MonoBehaviour
         Die();
     }
 
+
+    public void ResetHealth()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+        invincibilityTimer = 0f;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     void Die()
     {
         isDead = true;
-        OnDeath?.Invoke();
 
-        GetComponent<PlayerController>().enabled = false;
+        // stop the player moving
+        var controller = GetComponent<PlayerController>();
+        if (controller != null)
+            controller.enabled = false;
+
+        // stop the knockback too
+        var knockback = GetComponent<PlayerKnockback>();
+        if (knockback != null)
+            knockback.enabled = false;
+
+        OnDeath?.Invoke(); // GameManager.PlayerEliminated listens to this
     }
 
 #if UNITY_EDITOR
@@ -101,5 +108,8 @@ public class PlayerHealth : MonoBehaviour
 
     [ContextMenu("Debug / Heal 10")]
     void DebugHeal() => Heal(10f);
+
+    [ContextMenu("Debug / Instant Kill")]
+    void DebugKill() => InstantKill();
 #endif
 }
